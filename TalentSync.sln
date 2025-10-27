@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35208.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TalentSync", "TalentSync.fsproj", "{F4FAFE5D-70FC-4811-9A44-7946FBC52706}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TalentSync.Web", "TalentSync.Web", "{7C0AB848-CFFF-4E6F-8C17-45B18F709FFC}"
+	ProjectSection(SolutionItems) = preProject
+		script.js = script.js
+		appl_main.html = appl_main.html
+		styles.css = styles.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pages", "pages", "{2DAFAB8A-B8C1-40B9-9454-BF270763D93B}"
+	ProjectSection(SolutionItems) = preProject
+		emp_main.html = emp_main.html
+		login.html = login.html
+		personal_account.html = personal_account.html
+		register.html = register.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{6BC575B5-B7A4-415B-A202-2E674118707D}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\feature1.png = ..\..\feature1.png
+		..\..\feature2.png = ..\..\feature2.png
+		..\..\feature3.png = ..\..\feature3.png
+		..\..\feature4.png = ..\..\feature4.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F4FAFE5D-70FC-4811-9A44-7946FBC52706}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4FAFE5D-70FC-4811-9A44-7946FBC52706}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4FAFE5D-70FC-4811-9A44-7946FBC52706}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4FAFE5D-70FC-4811-9A44-7946FBC52706}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2DAFAB8A-B8C1-40B9-9454-BF270763D93B} = {7C0AB848-CFFF-4E6F-8C17-45B18F709FFC}
+		{6BC575B5-B7A4-415B-A202-2E674118707D} = {7C0AB848-CFFF-4E6F-8C17-45B18F709FFC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {980DA076-8257-4B9A-B391-685630EC32B9}
+	EndGlobalSection
+EndGlobal
