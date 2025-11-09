@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Регистрация - TalentSync</title>
-    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="../styles.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -21,10 +21,10 @@
             <h2>Регистрация</h2>
 
             <form id="register-form" method="post" action="/api/register">
-                <div class="form-group-email">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
-                    <span class="text-danger" id="email-error"></span>
+                <div class="form-group-surname">
+                    <label for="lastName">Фамилия</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" required>
+                    <span class="text-danger" id="lastName-error"></span>
                 </div>
 
                 <div class="form-group-name">
@@ -33,10 +33,16 @@
                     <span class="text-danger" id="firstName-error"></span>
                 </div>
 
-                <div class="form-group-surname">
-                    <label for="lastName">Фамилия</label>
-                    <input type="text" id="lastName" name="lastName" class="form-control" required>
-                    <span class="text-danger" id="lastName-error"></span>
+                <div class="form-group-number">
+                    <label for="number">Телефон</label>
+                    <input type="number" id="number" name="number" class="form-control" required>
+                    <span class="text-danger" id="number-error"></span>
+                </div>
+
+                <div class="form-group-email">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                    <span class="text-danger" id="email-error"></span>
                 </div>
 
                 <div class="form-group-password">

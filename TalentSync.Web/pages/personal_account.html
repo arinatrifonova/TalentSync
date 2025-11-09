@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>TalentSync</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../styles.css" />
     <!--<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">-->
 </head>
 <body>
@@ -11,9 +11,9 @@
     <header class="main-header">
         <div class="logo">TalentSync</div>
         <nav class="nav">
-            <a href="appl_main.html" id="applicant-link" class="nav-link">избранное</a>
-            <a href="emp_main.html" id="employer-link" class="nav-link">поиск</a>
-            <a href="personal_account.html" id="employer-link" class="nav-link">личный кабинет</a>
+            <a href="favorite_vacancies.html" id="applicant-link" class="nav-link">избранное</a>
+            <a href="search_main.html" id="employer-link" class="nav-link">поиск</a>
+            <a href="personal_account.html" id="employer-link" class="nav-link active">личный кабинет</a>
         </nav>
     </header>
 
@@ -47,8 +47,75 @@
         </section>
 
         <section class="resume-section" id="resume-section" style="display: none;">
-            <h2>Мои резюме</h2>
-            <p>Здесь резюме</p>
+            <button id="addResumeBtn" type="button">Добавить резюме</button>
+            <h2>Загрузите свое резюме на наш сайт <br> и получите профессиональные <span class="highlight2"> рекомендации по улучшению </span> 
+            <br> под конкретную вакансию</h2>
+            <div id="resumeModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+
+                    <form id="resumeForm">
+                        <div class="form-step active">
+                            <h3>Выберите или укажите профессию</h3>
+                            <select id="professionSelect" name="profession" required>
+                                <option value="">Выберите профессию</option>
+                                <option value="developer">Разработчик</option>
+                                <option value="designer">Дизайнер</option>
+                                <option value="analyst">Аналитик</option>
+                                <option value="manager">Менеджер</option>
+                                <option value="marketer">Маркетолог</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Заполните основную информацию о себе</h3>
+                            <label>Фамилия Имя Отчетсво</label>
+                            <input type="text" name="fullname" required>
+                            <label>Номер телефона</label>
+                            <input type="number" name="number" required>
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                            <label>Дата рождения</label>
+                            <input type="born" name="born" required>
+                            <label>Гражданство</label>
+                            <input type="citizen" name="citizen" required>
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Какое учебное заведение включить в резюме?</h3>
+                            <label>Учебное заведение</label>
+                            <input type="text" name="education">
+                            <label>Специальность</label>
+                            <input type="text" name="speciality">
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Какими навыками вы владеете?</h3>
+                            <select id="skillsSelect" name="skills" required>
+                                <option value="">Перечислите навыки</option>
+                                <option value="developer">Навык 1</option>
+                                <option value="designer">Навык 2</option>
+                                <option value="analyst">Навык 3</option>
+                                <option value="manager">Навык 4</option>
+                                <option value="marketer">Навык 5</option>
+                                <option value="other">Другое</option>
+                            </select>
+                            <!--<textarea name="skills" placeholder="Перечислите ключевые навыки"></textarea>-->
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Расскажите об опыте работы</h3>
+                            <textarea name="about" placeholder="О себе"></textarea>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="button" id="prevBtn">Назад</button>
+                            <button type="button" id="nextBtn">Далее</button>
+                        </div>
+                    </form>
+                </div>
+
         </section>
     </main>
 
@@ -73,6 +140,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

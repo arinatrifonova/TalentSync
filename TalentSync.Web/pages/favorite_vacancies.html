@@ -6,29 +6,24 @@
     <link rel="stylesheet" href="../styles.css" />
     <!--<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">-->
 </head>
-<body>
-    <div class="partial-circle"></div>
+<body class="page-favorites">
     <!-- шапка -->
-    <header class="main-header" id="emp-main-header">
-        <div class="logo" id="emp-logo">TalentSync</div>
+    <header class="main-header">
+        <div class="logo">TalentSync</div>
         <nav class="nav">
-            <a href="../appl_main.html" id="applicant-link" class="nav-link">соискателям</a>
-            <a href="emp_main.html" id="employer-link" class="nav-link">работодателям</a>
-            <a href="login.html" class="btn-link">авторизироваться</a>
-            <a href="register.html" class="btn-link primary">зарегистрироваться</a>
+            <a href="favorite_vacancies.html" id="applicant-link" class="nav-link">избранное</a>
+            <a href="search_main.html" id="employer-link" class="nav-link">поиск</a>
+            <a href="personal_account.html" id="employer-link" class="nav-link active">личный кабинет</a>
         </nav>
     </header>
 
-    <main>
-        <section class="cta-section">
-            <h1>
-                Разместите
-                <br> вакансию на TalentSync
-            </h1>
+    <main class="favorites-layout">
+        <h2 id="fav_vac">Избранные вакансии</h2>
+        <div class="saved-vacancies">
+            <section class="saved-section"> </section>
+        </div>
 
-            <a href="register.html" class="cta-button">Разместить вакансию</a>
-        </section>
-
+        <div id="vacancy-details" class="vacancy-details"></div>
     </main>
 
     <footer>
@@ -52,6 +47,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>
