@@ -30,13 +30,13 @@ type VacanciesController (httpClientFactory: IHttpClientFactory) =
                 let client = httpClientFactory.CreateClient()
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("TalentSyncApp/1.0")
 
-                // 1. Получаем список вакансий
+                // 1 получаем список вакансий
                 let listUrl = $"https://api.hh.ru/vacancies?text={Uri.EscapeDataString(query)}&area=113&per_page=20"
                 let! listResp = client.GetAsync(listUrl)
                 let! listContent = listResp.Content.ReadAsStringAsync()
                 let vacanciesList = deserializeVacanciesList listContent
 
-                // 2. Для каждой вакансии — полный запрос
+                // 2 для каждой вакансии полный запрос
                 let! fullVacancies =
                     vacanciesList.items
                     |> Seq.map (fun v ->
@@ -48,7 +48,7 @@ type VacanciesController (httpClientFactory: IHttpClientFactory) =
                         })
                     |> Task.WhenAll
 
-                // 3. Отправляем результат фронтенду
+                // 3 отправляем результат фронтенду
                 let jsonResult = serialize fullVacancies
                 //return this.Content(jsonResult, "application/json; charset=utf-8") :> IActionResult
                 return this.Content(jsonResult, "application/json", System.Text.Encoding.UTF8) :> IActionResult
@@ -59,24 +59,22 @@ type VacanciesController (httpClientFactory: IHttpClientFactory) =
 
 
 
-    ///// GET /api/vacancies?query=designer
-    //[<HttpGet>]
-    //member this.Get([<FromQuery>] query: string) : Task<IActionResult> =
-    //    task {
-    //        if String.IsNullOrWhiteSpace(query) then
-    //            // вернуть 400 если query пустой
-    //            return this.BadRequest("query is required") :> IActionResult
-    //        else
-    //            let client = httpClientFactory.CreateClient()
-    //            client.DefaultRequestHeaders.UserAgent.ParseAdd("TalentSyncApp/1.0")
 
-    //            let escaped = Uri.EscapeDataString(query)
-    //            let url = $"https://api.hh.ru/vacancies?text={query}&per_page=10"
-    //            let! resp = client.GetAsync(url)
-    //            //let! response = client.GetStringAsync(url)
-    //            let! content = resp.Content.ReadAsStringAsync()
-    //            // возвращаем JSON как есть
-    //            return this.Content(content, "application/json; charset=utf-8") :> IActionResult
 
-    //            //return base.Content(response, "application/json") :> IActionResult
-    //    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

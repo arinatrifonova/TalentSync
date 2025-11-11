@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pages", "pages", "{CEA3EAD4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{2D14A39B-4342-4131-BD1F-1D65B19F5152}"
 	ProjectSection(SolutionItems) = preProject
+		TalentSync.Web\img\Add.png = TalentSync.Web\img\Add.png
 		TalentSync.Web\img\feature1.png = TalentSync.Web\img\feature1.png
 		TalentSync.Web\img\feature2.png = TalentSync.Web\img\feature2.png
 		TalentSync.Web\img\feature3.png = TalentSync.Web\img\feature3.png

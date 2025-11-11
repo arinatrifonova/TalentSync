@@ -20,11 +20,11 @@ module Program =
     let main args =
         let builder = WebApplication.CreateBuilder(args)
 
-        // обязательно регистрируем контроллеры и http client
+        // регистрируем контроллеры и http client
         builder.Services.AddControllers() |> ignore
         builder.Services.AddHttpClient() |> ignore
 
-        // опционально: swagger для проверки
+        // swagger для проверки
         builder.Services.AddEndpointsApiExplorer() |> ignore
         builder.Services.AddSwaggerGen() |> ignore
 
@@ -52,6 +52,20 @@ module Program =
         app.Run()
 
         0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //module Program =
 //    let exitCode = 0

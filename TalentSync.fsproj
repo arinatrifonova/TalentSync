@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include=".gitignore" />
+    <Content Remove="Model\**" />
+    <EmbeddedResource Remove="Model\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Models.fs" />
+    <None Include=".gitignore" />
     <Compile Include="Controllers\VacanciesController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

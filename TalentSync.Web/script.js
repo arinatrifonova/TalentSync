@@ -40,7 +40,7 @@ function switchTab(tab) {
 
 // подключаться к hh
 async function loadVacancies(query) {
-    // Удаляем старые результаты, если есть
+    // удалить старые результаты, если есть
     const oldResults = document.querySelector(".vacancy-results");
     if (oldResults) oldResults.remove();
 
@@ -58,15 +58,12 @@ async function loadVacancies(query) {
                 const div = document.createElement("div");
                 div.classList.add("vacancy");
 
-                // Заголовок
                 const title = document.createElement("h3");
                 title.textContent = vacancy.name;
 
-                // Компания
                 const company = document.createElement("p");
                 company.textContent = vacancy.employer?.name || "Компания не указана";
 
-                // Зарплата
                 const salary = document.createElement("p");
                 if (vacancy.salary) {
                     const { from, to, currency } = vacancy.salary;
@@ -78,11 +75,9 @@ async function loadVacancies(query) {
                     salary.textContent = "Зарплата не указана";
                 }
 
-                // Контейнер для кнопок
                 const buttonGroup = document.createElement("div");
                 buttonGroup.classList.add("button-group");
 
-                // Кнопка Откликнуться
                 const applyBtn = document.createElement("button");
                 applyBtn.textContent = "Откликнуться";
                 applyBtn.classList.add("actionButton", "applyButton");
@@ -92,7 +87,6 @@ async function loadVacancies(query) {
                     //alert(`Спасибо за отклик на вакансию "${vacancy.name}"!`);
                 });
 
-                // Кнопка Сохранить
                 const likeBtn = document.createElement("button");
                 likeBtn.textContent = "Сохранить";
                 likeBtn.classList.add("actionButton", "likeButton");
@@ -118,17 +112,15 @@ async function loadVacancies(query) {
                     localStorage.setItem("savedVacancies", JSON.stringify(savedVacancies));
                 });
 
-                // Добавляем кнопки
                 buttonGroup.appendChild(applyBtn);
                 buttonGroup.appendChild(likeBtn);
 
-                // Собираем карточку
                 div.appendChild(title);
                 div.appendChild(company);
                 div.appendChild(salary);
                 div.appendChild(buttonGroup);
 
-                // При клике открывается модальное окно
+                // открываем модальное коно при клике
                 div.addEventListener("click", () => showVacancyModal(vacancy));
 
                 resultsContainer.appendChild(div);
@@ -136,8 +128,6 @@ async function loadVacancies(query) {
         } else {
             resultsContainer.textContent = "Вакансии не найдены";
         }
-
-        // Вставляем результаты в ту же секцию main (как раньше)
         document.querySelector("main").appendChild(resultsContainer);
     } catch (error) {
         alert("Ошибка при загрузке вакансий: " + error.message);
@@ -152,7 +142,7 @@ document.querySelector(".search-form")?.addEventListener("submit", async (e) => 
     await loadVacancies(query);
 });
 
-// Функция отображения модального окна
+// функция отображения модального окна
 function showVacancyModal(vacancy) {
     const modal = document.createElement("div");
     modal.classList.add("vacancy-modal");
@@ -177,13 +167,13 @@ function showVacancyModal(vacancy) {
 
     document.body.appendChild(modal);
 
-    // Закрытие окна
+    // закрыть окна
     modal.querySelector(".close").addEventListener("click", () => modal.remove());
     modal.addEventListener("click", (e) => {
         if (e.target === modal) modal.remove();
     });
 
-    // Логика Сохранить внутри модального кона
+    // логика Сохранить внутри модального кона
     const likeBtn = modal.querySelector(".likeButton");
     likeBtn.addEventListener("click", () => {
         likeBtn.classList.toggle("liked");
@@ -202,7 +192,6 @@ function showVacancyModal(vacancy) {
     });
 
 }
-
 
 // мои резюме 
 // загрузить вакансии при открытии страницы 
@@ -251,14 +240,14 @@ function loadSavedVacancies(savedContainer) {
 
             let savedVacancies = JSON.parse(localStorage.getItem("savedVacancies")) || [];
             if (isLiked) {
-                // добавляем обратно, если вдруг удалили
+                // если удалили обратно добавляем
                 if (!savedVacancies.some(v => v.id === vacancy.id)) {
                     savedVacancies.push(vacancy);
                 }
             } else {
-                // удаляем из сохранённых
+                // удаляем из сохраненок
                 savedVacancies = savedVacancies.filter(v => v.id !== vacancy.id);
-                div.remove(); // убираем карточку со страницы
+                div.remove(); 
             }
             localStorage.setItem("savedVacancies", JSON.stringify(savedVacancies));
         });
@@ -270,29 +259,19 @@ function loadSavedVacancies(savedContainer) {
         checkBtn.addEventListener("click", (event) => {
             event.stopPropagation();
 
-            // Проверяем, есть ли уже блок с результатом под этой вакансией если есть, удаляем
+            // проверить есть ли блок с рез-том под вакансией (если да удаляем)
             const existingResult = div.querySelector(".check-result");
             if (existingResult) {
                 existingResult.remove();
-                return; // чтобы по повторному клику скрывать результат
+                return;
             }
-
-            // Создаем блок с результатом проверки и добавляем под карточкой
-            //const resultBlock = document.createElement("div");
-            //resultBlock.classList.add("check-result");
-            //resultBlock.style.border = "1px solid #ccc";
-            //resultBlock.style.padding = "10px";
-            //resultBlock.style.marginTop = "10px";
-            //resultBlock.style.backgroundColor = "#f9f9f9";
 
             const resultBlock = document.createElement("div");
             resultBlock.classList.add("check-result");
 
-            // Заголовок
             const title = document.createElement("h4");
             title.textContent = "Результат проверки резюме";
 
-            // Параграфы с текстом
             const p1 = document.createElement("p");
             p1.innerHTML = `Проверяем ваше резюме на соответствие вакансии <strong>${vacancy.name}</strong>.`;
 
@@ -304,12 +283,10 @@ function loadSavedVacancies(savedContainer) {
             newResumeBtn.textContent = "Новое резюме";
             newResumeBtn.classList.add("actionButton", "newResumeButton");
             newResumeBtn.addEventListener("click", () => {
-                // Открываем модальное окно добавления резюме
                 const addBtn = document.getElementById("addResumeBtn");
-                if (addBtn) addBtn.click(); // используем уже существующую логику открытия формы
+                if (addBtn) addBtn.click(); 
             });
 
-            // Кнопка закрытия
             const closeBtn = document.createElement("button");
             closeBtn.type = "button";
             closeBtn.classList.add("close-result-btn");
@@ -391,7 +368,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // personal account (мои резюме, кнопка добавить резюме)
-
 const addResumeBtn = document.getElementById("addResumeBtn");
 const resumeModal = document.getElementById("resumeModal");
 if (addResumeBtn && resumeModal) {
@@ -402,13 +378,11 @@ if (addResumeBtn && resumeModal) {
 
     let currentStep = 0;
 
-    // Показать модальное окно
     addResumeBtn.addEventListener("click", () => {
         resumeModal.style.display = "flex";
         showStep(currentStep);
     });
 
-    // Закрыть окно
     closeModal.addEventListener("click", () => {
         resumeModal.style.display = "none";
     });
@@ -417,7 +391,6 @@ if (addResumeBtn && resumeModal) {
         if (e.target === resumeModal) resumeModal.style.display = "none";
     });
 
-    // Функция отображения шага
     function showStep(step) {
         steps.forEach((el, idx) => {
             el.classList.toggle("active", idx === step);
@@ -427,13 +400,11 @@ if (addResumeBtn && resumeModal) {
         nextBtn.textContent = step === steps.length - 1 ? "Сохранить" : "Далее";
     }
 
-    // Обработка кнопок
     nextBtn.addEventListener("click", () => {
         if (currentStep < steps.length - 1) {
             currentStep++;
             showStep(currentStep);
         } else {
-            // Здесь можно добавить логику сохранения данных
             alert("Резюме успешно сохранено!");
             resumeModal.style.display = "none";
             currentStep = 0;
