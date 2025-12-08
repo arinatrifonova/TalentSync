@@ -1,6 +1,4 @@
-﻿//module PasswordUtils
-
-namespace TalentSync.Utils
+﻿namespace TalentSync.Utils
 
 open System.Security.Cryptography
 open System.Text
@@ -13,3 +11,7 @@ module PasswordUtils =
         |> sha.ComputeHash
         |> Array.map (fun b -> b.ToString("x2"))
         |> String.concat ""
+
+    let verifyPassword (password: string) (storedHash: string) : bool =
+        let hashOfInput = hashPassword password
+        hashOfInput = storedHash

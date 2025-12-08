@@ -17,6 +17,22 @@
         </nav>
     </header>
 
+    <script>
+        // проверяем авторизацию при загрузке страницы
+        function checkAuth() {
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            
+            if (!userId) {
+                window.location.href = '/appl_main.html';
+                return false;
+            }
+            return true;
+        }
+        if (!checkAuth()) {
+            document.body.innerHTML = '<h1>Необходимо войти в аккаунт</h1>';
+        }
+    </script>
+
     <main>
         <section class="switch-section">
             <button class="switch-btn active" onclick="switchTab('profile')">личный кабинет</button>
@@ -25,8 +41,10 @@
 
         <section class="profile-section" id="profile-section">
             <div class="profile-card">
-                <img src="https://www.pica-ai.com/_next/image/?url=https%3A%2F%2Fstatic.staticspic.com%2F_next%2Fstatic%2Fmedia%2FRectangle-4.5524b621.png&w=640&q=75"
+                <img id="profilePhoto"
+                     src="/img/loadphoto.png"
                      alt="Фото профиля" class="profile-photo">
+                <input type="file" id="photoUpload" accept="image/*" style="display: none;">
 
                 <div class="profile-info">
                     <h2 class="profile-name"></h2>
@@ -42,9 +60,37 @@
                             <p></p>
                         </div>
                     </div>
+                    <button id="editProfileBtn">Редактировать профиль</button>
+                    <button class="logout-btn" onclick="logoutUser()">Выйти</button>
                 </div>
             </div>
         </section>
+
+        <div id="editProfileModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" id="closeEditProfile">&times;</span>
+                <h2>Редактировать профиль</h2>
+                <form id="editProfileForm">
+                    <label>
+                        Фамилия:<br>
+                        <input type="text" name="lastName" required>
+                    </label><br>
+                    <label>
+                        Имя:<br>
+                        <input type="text" name="firstName" required>
+                    </label><br>
+                    <label>
+                        Телефон:<br>
+                        <input type="text" name="telephone_number" required>
+                    </label><br>
+                    <label>
+                        Email:<br>
+                        <input type="email" name="email" required>
+                    </label><br>
+                    <button type="submit">Сохранить</button>
+                </form>
+            </div>
+        </div>
 
         <section class="resume-section" id="resume-section" style="display: none;">
             <button id="addResumeBtn" type="button">Добавить резюме</button>

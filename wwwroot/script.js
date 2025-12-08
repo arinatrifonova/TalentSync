@@ -452,36 +452,6 @@ if (registerForm) {
     });
 }
 
-//document.getElementById("register-form").addEventListener("submit", async (e) => {
-//    e.preventDefault();
-
-//    const data = {
-//        lastName: e.target.lastName.value,
-//        firstName: e.target.firstName.value,
-//        telephone_number: e.target.number.value,
-//        email: e.target.email.value,
-//        password: e.target.password.value
-//    };
-
-//    const response = await fetch("https://localhost:64102/api/user/register", {
-//        method: "POST",
-//        headers: { "Content-Type": "application/json" },
-//        body: JSON.stringify(data)
-//    });
-
-//    if (response.ok) {
-//        alert("Регистрация прошла успешно!");
-//        const result = await response.json();
-//        // сохраняем id пользователя
-//        localStorage.setItem("userId", result.id);
-//        window.location.href = "/pages/personal_account.html";
-//    } else {
-//        const error = await response.json();
-//        alert("Ошибка: " + error.error);
-//    }
-//});
-
-
 // личный кабинет — загрузка данных пользователя
 async function loadUserProfile() {
     const userId = localStorage.getItem("userId");
@@ -509,34 +479,170 @@ async function loadUserProfile() {
     }
 }
 
-if (window.location.pathname.includes("personal_account.html")) {
-    loadUserProfile();
+
+// ВОТ ТУТ ПРАВИЛЬНЫЙ БЛОК: профайл + фото вместе
+document.addEventListener("DOMContentLoaded", async () => {
+    if (!window.location.pathname.includes("personal_account.html")) return;
+    await loadUserProfile();
+
+    const profilePhoto = document.getElementById("profilePhoto");
+    const photoUpload = document.getElementById("photoUpload");
+
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    const savedPhoto = localStorage.getItem("userPhoto_" + userId);
+    if (savedPhoto && profilePhoto) {
+        profilePhoto.src = savedPhoto;
+    }
+
+    if (profilePhoto && photoUpload) {
+        profilePhoto.addEventListener("click", () => {
+            photoUpload.click();
+        });
+
+        // сжимаем фотку
+        photoUpload.addEventListener("change", () => {
+            const file = photoUpload.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    const maxSize = 600; 
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height *= maxSize / width;
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width *= maxSize / height;
+                            height = maxSize;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedData = canvas.toDataURL("image/jpeg", 0.7);
+
+                    profilePhoto.src = compressedData;
+
+                    try {
+                        localStorage.setItem("userPhoto_" + userId, compressedData);
+                    } catch (e) {
+                        console.error("Ошибка сохранения фото:", e);
+                        alert("Фото слишком большое, попробуйте выбрать другое.");
+                    }
+                };
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+});
+
+async function logoutUser() {
+    await fetch('/api/User/logout', { method: 'POST' });
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = '/appl_main.html';  
 }
 
+// редактирование профиля
+document.addEventListener("DOMContentLoaded", () => {
+    const editBtn = document.getElementById("editProfileBtn");
+    const modal = document.getElementById("editProfileModal");
+    const closeBtn = document.getElementById("closeEditProfile");
+    const form = document.getElementById("editProfileForm");
 
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
 
+    async function fillForm() {
+        const resp = await fetch(`https://localhost:64102/api/user/${userId}`);
+        if (!resp.ok) return;
+        const user = await resp.json();
 
+        form.lastName.value = user.last_name || "";
+        form.firstName.value = user.first_name || "";
+        form.telephone_number.value = user.telephone_number || "";
+        form.email.value = user.email || "";
+    }
+
+    editBtn.addEventListener("click", () => {
+        fillForm();
+        modal.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    window.addEventListener("click", e => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            LastName: form.lastName.value,
+            FirstName: form.firstName.value,
+            Telephone_number: form.telephone_number.value,
+            Email: form.email.value
+        };
+
+        const resp = await fetch(`https://localhost:64102/api/user/${userId}`, {
+            method: "PUT", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        if (resp.ok) {
+            alert("Профиль успешно обновлен");
+            modal.style.display = "none";
+            loadUserProfile();
+        } else {
+            const err = await resp.json();
+            alert("Ошибка: " + (err.error || "Неизвестная ошибка"));
+        }
+    });
+});
 
 //
-//document.getElementById("registerBtn").addEventListener("click", async () => {
-//    const data = {
-//        LastName: document.getElementById("lastName").value,
-//        FirstName: document.getElementById("firstName").value,
-//        Telephone_number: document.getElementById("number").value,
-//        Email: document.getElementById("email").value,
-//        Password: document.getElementById("password").value
-//    };
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-//    const response = await fetch("/api/user/register", {
-//        method: "POST",
-//        headers: { "Content-Type": "application/json" },
-//        body: JSON.stringify(data)
-//    });
+    const data = {
+        email: e.target.email.value,
+        password: e.target.password.value
+    };
 
-//    if (response.ok) {
-//        alert("Регистрация прошла успешно!");
-//    } else {
-//        const error = await response.json();
-//        alert("Ошибка: " + (error.error || "Неизвестная ошибка"));
-//    }
-//});
+    const response = await fetch("https://localhost:64102/api/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        localStorage.setItem("userId", result.id);
+        window.location.href = "/pages/personal_account.html";
+    } else {
+        alert("Неверный email или пароль");
+    }
+});

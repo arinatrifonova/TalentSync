@@ -8,6 +8,8 @@
     <Compile Include="Models.fs" />
     <Compile Include="Model\RegisterResponse.fs" />
     <Compile Include="Model\UserRegisterDto.fs" />
+    <Compile Include="Model\UserLoginDto.fs" />
+    <Compile Include="Model\UserLoginDb.fs" />
     <Compile Include="Utils\PasswordUtils.fs" />
     <None Include=".gitignore" />
     <Compile Include="Controllers\UserController.fs" />
