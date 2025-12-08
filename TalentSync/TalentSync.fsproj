@@ -7,6 +7,9 @@
   <ItemGroup>
     <Compile Include="WeatherForecast.fs" />
     <Compile Include="Controllers/WeatherForecastController.fs" />
+    <Compile Include="Controllers/UserController.fs" />
+    <Compile Include="Utils/PasswordUtils.fs" />
+    <Compile Include="Model/RegisterResponse.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

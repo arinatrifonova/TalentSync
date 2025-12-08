@@ -419,3 +419,124 @@ if (addResumeBtn && resumeModal) {
         }
     });
 }
+
+
+// регистрация
+const registerForm = document.getElementById("register-form");
+if (registerForm) {
+    registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            lastName: e.target.lastName.value,
+            firstName: e.target.firstName.value,
+            telephone_number: e.target.number.value,
+            email: e.target.email.value,
+            password: e.target.password.value
+        };
+
+        const response = await fetch("https://localhost:64102/api/user/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            localStorage.setItem("userId", result.id);
+            window.location.href = "/pages/personal_account.html";
+        } else {
+            const error = await response.json();
+            alert("Ошибка: " + error.error);
+        }
+    });
+}
+
+//document.getElementById("register-form").addEventListener("submit", async (e) => {
+//    e.preventDefault();
+
+//    const data = {
+//        lastName: e.target.lastName.value,
+//        firstName: e.target.firstName.value,
+//        telephone_number: e.target.number.value,
+//        email: e.target.email.value,
+//        password: e.target.password.value
+//    };
+
+//    const response = await fetch("https://localhost:64102/api/user/register", {
+//        method: "POST",
+//        headers: { "Content-Type": "application/json" },
+//        body: JSON.stringify(data)
+//    });
+
+//    if (response.ok) {
+//        alert("Регистрация прошла успешно!");
+//        const result = await response.json();
+//        // сохраняем id пользователя
+//        localStorage.setItem("userId", result.id);
+//        window.location.href = "/pages/personal_account.html";
+//    } else {
+//        const error = await response.json();
+//        alert("Ошибка: " + error.error);
+//    }
+//});
+
+
+// личный кабинет — загрузка данных пользователя
+async function loadUserProfile() {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+
+    const response = await fetch(`https://localhost:64102/api/user/${userId}`);
+    if (!response.ok) return;
+
+    const user = await response.json();
+
+    const nameElement = document.querySelector(".profile-name");
+    const phoneElement = document.querySelector(".phone p");
+    const emailElement = document.querySelector(".email p");
+
+    if (nameElement) {
+        nameElement.textContent = `${user.first_name} ${user.last_name}`;
+    }
+
+    if (phoneElement) {
+        phoneElement.textContent = user.telephone_number;
+    }
+
+    if (emailElement) {
+        emailElement.textContent = user.email;
+    }
+}
+
+if (window.location.pathname.includes("personal_account.html")) {
+    loadUserProfile();
+}
+
+
+
+
+
+//
+//document.getElementById("registerBtn").addEventListener("click", async () => {
+//    const data = {
+//        LastName: document.getElementById("lastName").value,
+//        FirstName: document.getElementById("firstName").value,
+//        Telephone_number: document.getElementById("number").value,
+//        Email: document.getElementById("email").value,
+//        Password: document.getElementById("password").value
+//    };
+
+//    const response = await fetch("/api/user/register", {
+//        method: "POST",
+//        headers: { "Content-Type": "application/json" },
+//        body: JSON.stringify(data)
+//    });
+
+//    if (response.ok) {
+//        alert("Регистрация прошла успешно!");
+//    } else {
+//        const error = await response.json();
+//        alert("Ошибка: " + (error.error || "Неизвестная ошибка"));
+//    }
+//});

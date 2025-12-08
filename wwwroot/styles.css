@@ -306,7 +306,7 @@ footer {
         font-size: 16px;
     }
 
-.submit-reg {
+#registerBtn {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -322,7 +322,7 @@ footer {
     border: none;
     justify-content: center;
 }
-    .submit-reg:hover {
+    #registerBtn:hover {
         background-color: #1257CB;
         border: 2px solid #1257CB;
     }

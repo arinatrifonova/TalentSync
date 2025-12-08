@@ -5,32 +5,6 @@ VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TalentSync", "TalentSync.fsproj", "{7FCBDA7E-341F-466B-8332-94BE848E9A2E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TalentSync.Web", "TalentSync.Web", "{9D696EF7-274E-4B55-8958-9D74B3986E3F}"
-	ProjectSection(SolutionItems) = preProject
-		TalentSync.Web\appl_main.html = TalentSync.Web\appl_main.html
-		TalentSync.Web\script.js = TalentSync.Web\script.js
-		TalentSync.Web\styles.css = TalentSync.Web\styles.css
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pages", "pages", "{CEA3EAD4-4E11-42C7-9D0C-42A6FC5574FC}"
-	ProjectSection(SolutionItems) = preProject
-		TalentSync.Web\pages\emp_main.html = TalentSync.Web\pages\emp_main.html
-		TalentSync.Web\pages\favorite_vacancies.html = TalentSync.Web\pages\favorite_vacancies.html
-		TalentSync.Web\pages\login.html = TalentSync.Web\pages\login.html
-		TalentSync.Web\pages\personal_account.html = TalentSync.Web\pages\personal_account.html
-		TalentSync.Web\pages\register.html = TalentSync.Web\pages\register.html
-		TalentSync.Web\pages\search_main.html = TalentSync.Web\pages\search_main.html
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{2D14A39B-4342-4131-BD1F-1D65B19F5152}"
-	ProjectSection(SolutionItems) = preProject
-		TalentSync.Web\img\Add.png = TalentSync.Web\img\Add.png
-		TalentSync.Web\img\feature1.png = TalentSync.Web\img\feature1.png
-		TalentSync.Web\img\feature2.png = TalentSync.Web\img\feature2.png
-		TalentSync.Web\img\feature3.png = TalentSync.Web\img\feature3.png
-		TalentSync.Web\img\feature4.png = TalentSync.Web\img\feature4.png
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,10 +18,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{CEA3EAD4-4E11-42C7-9D0C-42A6FC5574FC} = {9D696EF7-274E-4B55-8958-9D74B3986E3F}
-		{2D14A39B-4342-4131-BD1F-1D65B19F5152} = {9D696EF7-274E-4B55-8958-9D74B3986E3F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {980DA076-8257-4B9A-B391-685630EC32B9}

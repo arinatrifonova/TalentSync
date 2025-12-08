@@ -1,5 +1,8 @@
 namespace TalentSync
 #nowarn "20"
+open Microsoft.Extensions.Configuration
+open Npgsql
+open Dapper
 open System
 open System.Collections.Generic
 open System.IO
@@ -19,6 +22,8 @@ module Program =
     [<EntryPoint>]
     let main args =
         let builder = WebApplication.CreateBuilder(args)
+        // «агружаем connection string
+        let connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
 
         // регистрируем контроллеры и http client
         builder.Services.AddControllers() |> ignore
@@ -36,7 +41,11 @@ module Program =
             )
         ) |> ignore
 
-
+        // PostgreSQL (один коннекшн на приложение)
+        builder.Services.AddTransient<NpgsqlConnection>(fun _ ->
+            let connStr = builder.Configuration.GetConnectionString("DefaultConnection")
+            new NpgsqlConnection(connStr)
+        ) |> ignore
 
         let app = builder.Build()
 
@@ -49,6 +58,8 @@ module Program =
         app.UseHttpsRedirection() |> ignore
         app.UseAuthorization() |> ignore
         app.MapControllers() |> ignore
+        app.UseStaticFiles() |> ignore
+
         app.Run()
 
         0
