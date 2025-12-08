@@ -452,7 +452,7 @@ if (registerForm) {
     });
 }
 
-// личный кабинет — загрузка данных пользователя
+// личный кабинет загрузка данных пользователя
 async function loadUserProfile() {
     const userId = localStorage.getItem("userId");
     if (!userId) return;
@@ -479,8 +479,7 @@ async function loadUserProfile() {
     }
 }
 
-
-// ВОТ ТУТ ПРАВИЛЬНЫЙ БЛОК: профайл + фото вместе
+// загрузка фотографии
 document.addEventListener("DOMContentLoaded", async () => {
     if (!window.location.pathname.includes("personal_account.html")) return;
     await loadUserProfile();
