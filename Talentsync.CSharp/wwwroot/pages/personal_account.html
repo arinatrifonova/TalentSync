@@ -1,0 +1,193 @@
+﻿﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>TalentSync</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <!--<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">-->
+</head>
+<body>
+    <!-- шапка -->
+    <header class="main-header">
+        <div class="logo">TalentSync</div>
+        <nav class="nav">
+            <a href="favorite_vacancies.html" id="applicant-link" class="nav-link">избранное</a>
+            <a href="search_main.html" id="employer-link" class="nav-link">поиск</a>
+            <a href="personal_account.html" id="employer-link" class="nav-link active">личный кабинет</a>
+        </nav>
+    </header>
+
+    <script>
+        // проверяем авторизацию при загрузке страницы
+        function checkAuth() {
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            
+            if (!userId) {
+                window.location.href = '/appl_main.html';
+                return false;
+            }
+            return true;
+        }
+        if (!checkAuth()) {
+            document.body.innerHTML = '<h1>Необходимо войти в аккаунт</h1>';
+        }
+    </script>
+
+    <main>
+        <section class="switch-section">
+            <button class="switch-btn active" onclick="switchTab('profile')">личный кабинет</button>
+            <button class="switch-btn" onclick="switchTab('resume')">мои резюме</button>
+        </section>
+
+        <section class="profile-section" id="profile-section">
+            <div class="profile-card">
+                <img id="profilePhoto"
+                     src="/img/loadphoto.png"
+                     alt="Фото профиля" class="profile-photo">
+                <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+
+                <div class="profile-info">
+                    <h2 class="profile-name"></h2>
+                    <p class="birthdate">08.04.1997</p>
+
+                    <div class="contact-row">
+                        <div class="contact-item phone">
+                            <strong>Телефон</strong>
+                            <p></p>
+                        </div>
+                        <div class="contact-item email">
+                            <strong>Email</strong>
+                            <p></p>
+                        </div>
+                    </div>
+                    <button id="editProfileBtn">Редактировать профиль</button>
+                    <button class="logout-btn" onclick="logoutUser()">Выйти</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="editProfileModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" id="closeEditProfile">&times;</span>
+                <h2>Редактировать профиль</h2>
+                <form id="editProfileForm">
+                    <label>
+                        Фамилия:<br>
+                        <input type="text" name="lastName" required>
+                    </label><br>
+                    <label>
+                        Имя:<br>
+                        <input type="text" name="firstName" required>
+                    </label><br>
+                    <label>
+                        Телефон:<br>
+                        <input type="text" name="telephone_number" required>
+                    </label><br>
+                    <label>
+                        Email:<br>
+                        <input type="email" name="email" required>
+                    </label><br>
+                    <button type="submit">Сохранить</button>
+                </form>
+            </div>
+        </div>
+
+        <section class="resume-section" id="resume-section" style="display: none;">
+            <button id="addResumeBtn" type="button">Добавить резюме</button>
+            <h2>
+                Загрузите свое резюме на наш сайт <br> и получите профессиональные <span class="highlight2"> рекомендации по улучшению </span>
+                <br> под конкретную вакансию
+            </h2>
+            <div id="resumeModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+
+                    <form id="resumeForm">
+                        <div class="form-step active">
+                            <h3>Выберите или укажите профессию</h3>
+                            <select id="professionSelect" name="profession" required>
+                                <option value="">Выберите профессию</option>
+                                <option value="developer">Разработчик</option>
+                                <option value="designer">Дизайнер</option>
+                                <option value="analyst">Аналитик</option>
+                                <option value="manager">Менеджер</option>
+                                <option value="marketer">Маркетолог</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Заполните основную информацию о себе</h3>
+                            <label>Фамилия Имя Отчетсво</label>
+                            <input type="text" name="fullname" required>
+                            <label>Номер телефона</label>
+                            <input type="number" name="number" required>
+                            <label>Email</label>
+                            <input type="email" name="email" required>
+                            <label>Дата рождения</label>
+                            <input type="born" name="born" required>
+                            <label>Гражданство</label>
+                            <input type="citizen" name="citizen" required>
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Какое учебное заведение включить в резюме?</h3>
+                            <label>Учебное заведение</label>
+                            <input type="text" name="education">
+                            <label>Специальность</label>
+                            <input type="text" name="speciality">
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Какими навыками вы владеете?</h3>
+                            <select id="skillsSelect" name="skills" required>
+                                <option value="">Перечислите навыки</option>
+                                <option value="developer">Навык 1</option>
+                                <option value="designer">Навык 2</option>
+                                <option value="analyst">Навык 3</option>
+                                <option value="manager">Навык 4</option>
+                                <option value="marketer">Навык 5</option>
+                                <option value="other">Другое</option>
+                            </select>
+                            <!--<textarea name="skills" placeholder="Перечислите ключевые навыки"></textarea>-->
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Расскажите об опыте работы</h3>
+                            <textarea name="about" placeholder="О себе"></textarea>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="button" id="prevBtn">Назад</button>
+                            <button type="button" id="nextBtn">Далее</button>
+                        </div>
+                    </form>
+                </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-item">
+                <p><strong>Наш Email</strong></p>
+                <p>talentsync@gmail.com</p>
+            </div>
+            <div class="footer-item">
+                <p><strong>Наш Website</strong></p>
+                <p>www.talentsync.com</p>
+            </div>
+            <div class="footer-item">
+                <p><strong>Наш Адрес</strong></p>
+                <p>ул. Большая Красная 70 <br>г. Казань</p>
+            </div>
+            <div class="footer-item">
+                <p><strong>Наш Телефон</strong></p>
+                <p>+8 995 234 44</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>
