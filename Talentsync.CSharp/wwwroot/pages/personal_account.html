@@ -1,4 +1,5 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
@@ -16,22 +17,6 @@
             <a href="personal_account.html" id="employer-link" class="nav-link active">личный кабинет</a>
         </nav>
     </header>
-
-    <script>
-        // проверяем авторизацию при загрузке страницы
-        function checkAuth() {
-            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
-            
-            if (!userId) {
-                window.location.href = '/appl_main.html';
-                return false;
-            }
-            return true;
-        }
-        if (!checkAuth()) {
-            document.body.innerHTML = '<h1>Необходимо войти в аккаунт</h1>';
-        }
-    </script>
 
     <main>
         <section class="switch-section">
@@ -98,6 +83,9 @@
                 Загрузите свое резюме на наш сайт <br> и получите профессиональные <span class="highlight2"> рекомендации по улучшению </span>
                 <br> под конкретную вакансию
             </h2>
+            <div id="currentResumeContainer" class="current-resume">
+                <p>Загрузка резюме...</p>
+            </div>
             <div id="resumeModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
@@ -105,15 +93,27 @@
                     <form id="resumeForm">
                         <div class="form-step active">
                             <h3>Выберите или укажите профессию</h3>
-                            <select id="professionSelect" name="profession" required>
-                                <option value="">Выберите профессию</option>
-                                <option value="developer">Разработчик</option>
-                                <option value="designer">Дизайнер</option>
-                                <option value="analyst">Аналитик</option>
-                                <option value="manager">Менеджер</option>
-                                <option value="marketer">Маркетолог</option>
-                                <option value="other">Другое</option>
-                            </select>
+                            <input type="text" name="profession" placeholder="Введите профессию" required>
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Тип занятости</h3>
+                            <div>
+                                <label><input type="checkbox" name="employmentType" value="Постоянная работа"> Постоянная работа</label><br>
+                                <label><input type="checkbox" name="employmentType" value="Подработка"> Подработка</label><br>
+                                <label><input type="checkbox" name="employmentType" value="Стажировка"> Стажировка</label><br>
+                                <label><input type="checkbox" name="employmentType" value="Волонтёрство"> Волонтёрство</label>
+                            </div>
+                        </div>
+
+                        <div class="form-step">
+                            <h3>Формат работы</h3>
+                            <div>
+                                <label><input type="radio" name="workFormat" value="На месте работодателя" required> На месте работодателя</label><br>
+                                <label><input type="radio" name="workFormat" value="Удалённо"> Удалённо</label><br>
+                                <label><input type="radio" name="workFormat" value="Гибрид"> Гибрид</label><br>
+                                <label><input type="radio" name="workFormat" value="Разъездная"> Разъездная</label>
+                            </div>
                         </div>
 
                         <div class="form-step">
@@ -131,24 +131,37 @@
                         </div>
 
                         <div class="form-step">
-                            <h3>Какое учебное заведение включить в резюме?</h3>
+                            <h3>Образование</h3>
+
                             <label>Учебное заведение</label>
-                            <input type="text" name="education">
-                            <label>Специальность</label>
-                            <input type="text" name="speciality">
+                            <input type="text" name="educationPlace" required>
+
+                            <label>Факультет</label>
+                            <input type="text" name="faculty">
+
+                            <label>Специализация</label>
+                            <input type="text" name="specialization">
+
+                            <label>Уровень образования</label>
+                            <select name="educationLevel" required>
+                                <option value="">Укажите уровень</option>
+                                <option value="Среднее">Среднее</option>
+                                <option value="Среднее специальное">Среднее специальное</option>
+                                <option value="Неоконченное высшее">Неоконченное высшее</option>
+                                <option value="Высшее">Высшее</option>
+                                <option value="Бакалавр">Бакалавр</option>
+                                <option value="Магистр">Магистр</option>
+                                <option value="Кандидат наук">Кандидат наук</option>
+                                <option value="Доктор наук">Доктор наук</option>
+                            </select>
+
+                            <label>Год окончания</label>
+                            <input type="number" name="graduationYear" min="1900" max="2100" placeholder="Например: 2023">
                         </div>
 
                         <div class="form-step">
                             <h3>Какими навыками вы владеете?</h3>
-                            <select id="skillsSelect" name="skills" required>
-                                <option value="">Перечислите навыки</option>
-                                <option value="developer">Навык 1</option>
-                                <option value="designer">Навык 2</option>
-                                <option value="analyst">Навык 3</option>
-                                <option value="manager">Навык 4</option>
-                                <option value="marketer">Навык 5</option>
-                                <option value="other">Другое</option>
-                            </select>
+                            <textarea name="skills" placeholder="Перечислите ключевые навыки" required></textarea>
                             <!--<textarea name="skills" placeholder="Перечислите ключевые навыки"></textarea>-->
                         </div>
 
@@ -163,7 +176,7 @@
                         </div>
                     </form>
                 </div>
-
+            </div>
         </section>
     </main>
 
@@ -191,3 +204,137 @@
     <script src="/script.js"></script>
 </body>
 </html>
+
+<script>
+    // проверяем авторизацию при загрузке страницы
+    function checkAuth() {
+        const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+
+        if (!userId) {
+            window.location.href = '/appl_main.html';
+            return false;
+        }
+        return true;
+    }
+    if (!checkAuth()) {
+        document.body.innerHTML = '<h1>Необходимо войти в аккаунт</h1>';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Кнопка "Добавить резюме"
+        const addResumeBtn = document.getElementById("addResumeBtn");
+        const resumeModal = document.getElementById("resumeModal");
+        const resumeForm = document.getElementById("resumeForm");
+
+        // Открыть модальное окно
+        if (addResumeBtn && resumeModal) {
+            addResumeBtn.addEventListener("click", () => {
+                resumeModal.style.display = "block";
+            });
+
+            // Закрыть крестик
+            const closeBtn = resumeModal.querySelector(".close");
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    resumeModal.style.display = "none";
+                });
+            }
+
+            // Закрыть при клике вне модального окна
+            window.addEventListener("click", (e) => {
+                if (e.target === resumeModal) {
+                    resumeModal.style.display = "none";
+                }
+            });
+        }
+
+        // Форма шагов
+        const formSteps = document.querySelectorAll(".form-step");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        let currentStep = 0;
+
+        function showStep(step) {
+            formSteps.forEach((s, i) => {
+                s.classList.toggle("active", i === step);
+            });
+        }
+        showStep(currentStep);
+
+        prevBtn.addEventListener("click", () => {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        nextBtn.addEventListener("click", () => {
+            if (currentStep < formSteps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        // Обработка отправки формы
+        resumeForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+            if (!userId) {
+                alert("Ошибка авторизации: нет userId");
+                return;
+            }
+
+            const formData = new FormData(resumeForm);
+            const data = Object.fromEntries(formData.entries());
+
+            // Поля, которые у тебя есть в `ResumeDto`
+            const resumeDto = {
+                userId: parseInt(userId, 10),
+                profession: data.profession,
+                fullName: data.fullname,
+                phone: data.number,
+                email: data.email,
+                birthDate: data.born ? data.born + "T00:00:00" : null,
+                citizenship: data.citizen,
+                educationPlace: data.education || "",
+                educationSpeciality: data.speciality || "",
+                skills: data.skills || "",        // сейчас select, можно сделать textarea
+                about: data.about || ""
+            };
+
+            console.log("Отправляем резюме:", resumeDto);
+
+            try {
+                const response = await fetch("/api/resume", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(resumeDto)
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    console.error("Ошибка сервера:", error);
+                    alert("Ошибка сохранения резюме: " + error);
+                    return;
+                }
+
+                const result = await response.json();
+                alert("Резюме успешно добавлено (id: " + result.id + ")");
+
+                // закрыть модалку
+                resumeModal.style.display = "none";
+
+                // можно обновить /api/resume?userId=... и отобразить найденное резюме
+                // loadResume(userId);
+            } catch (err) {
+                console.error("Ошибка запроса:", err);
+                alert("Ошибка сети (см. консоль)");
+            }
+        });
+    });
+
+</script>

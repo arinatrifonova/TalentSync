@@ -95,6 +95,32 @@
         </div>
     </footer>
 
-    <script src="../script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+<script>
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+            email: e.target.email.value,
+            password: e.target.password.value
+        };
+
+        const response = await fetch("https://localhost:64102/api/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            localStorage.setItem("userId", result.id);
+            window.location.href = "/pages/personal_account.html";
+        } else {
+            alert("Неверный email или пароль");
+        }
+    });
+
+</script>
