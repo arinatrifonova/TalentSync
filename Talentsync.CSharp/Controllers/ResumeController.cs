@@ -144,28 +144,28 @@ namespace Talentsync.CSharp.Controllers
         public IActionResult GetResumes([FromQuery] int userId)
         {
             const string sql = @"
-        SELECT
-            id,
-            user_id,
-            profession,
-            full_name,
-            phone,
-            email,
-            birth_date,
-            citizenship,
-            education_place,
-            faculty,
-            specialization,
-            education_level,
-            graduation_year,
-            employment_type,
-            work_format,
-            skills,
-            about,
-            created_at
-        FROM resume
-        WHERE user_id = @UserId
-        ORDER BY created_at DESC";
+                SELECT
+                    id,
+                    user_id,
+                    profession,
+                    full_name,
+                    phone,
+                    email,
+                    birth_date,
+                    citizenship,
+                    education_place,
+                    faculty,
+                    specialization,
+                    education_level,
+                    graduation_year,
+                    employment_type,
+                    work_format,
+                    skills,
+                    about,
+                    created_at
+                FROM resume
+                WHERE user_id = @UserId
+                ORDER BY created_at DESC";
 
             var resumes = db.Query<ResumeDto>(sql, new { UserId = userId }).ToList();
 

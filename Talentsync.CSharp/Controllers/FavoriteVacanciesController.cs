@@ -23,12 +23,14 @@ namespace Talentsync.CSharp.Controllers
                     user_id,
                     vacancy_id,
                     vacancy_name,
+                    vacancy_description,
                     created_at
                 )
                 VALUES (
                     @UserId,
                     @VacancyId,
                     @VacancyName,
+                    @VacancyDescription,
                     NOW()
                 )
                 ON CONFLICT (user_id, vacancy_id)
@@ -38,7 +40,7 @@ namespace Talentsync.CSharp.Controllers
 
             try
             {
-                var id = db.QuerySingleOrDefault<int?>(sql, dto);
+                var id = db.QuerySingleOrDefault<long?>(sql, dto);
                 // если есть, вернём id; если нет (уже есть), вернём 200 без id
                 return Ok(new { id = id });  // id может быть null
             }
@@ -50,7 +52,7 @@ namespace Talentsync.CSharp.Controllers
 
 
         [HttpDelete("{vacancyId}")]
-        public IActionResult Remove(int userId, string vacancyId)
+        public IActionResult Remove(int userId, long vacancyId)
         {
             const string sql = @"
             DELETE FROM favorite_vacancies
@@ -63,22 +65,19 @@ namespace Talentsync.CSharp.Controllers
         public IActionResult GetForUser([FromQuery] int userId)
         {
             const string sql = @"
-                SELECT DISTINCT
-                    fv.vacancy_id AS Id,
-                    f.v.name  AS Name
-                FROM favorite_vacancies fv
-                INNER JOIN vacancies f ON f.id = fv.vacancy_id
-                WHERE fv.user_id = @UserId";
-
-            // но если у тебя нет таблицы `vacancies` в БД, то лучше так:
-            const string sqlMemory = @"
-                SELECT DISTINCT
-                    vacancy_id AS Id,
-                    vacancy_name AS Name
+                SELECT
+                    vacancy_id AS id,
+                    vacancy_name AS title,
+                    created_at
                 FROM favorite_vacancies
-                WHERE user_id = @UserId";
+                WHERE user_id = @UserId
+                ORDER BY created_at DESC";
 
-            var rows = db.Query<Vacancy>(sqlMemory, new { UserId = userId });
+            var rows = db.Query(sql, new
+            {
+                UserId = userId
+            });
+
             return Ok(rows);
         }
 

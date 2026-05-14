@@ -54,27 +54,43 @@ async function loadVacancies(query) {
         const resultsContainer = document.createElement("div");
         resultsContainer.classList.add("vacancy-results");
 
-        if (Array.isArray(data) && data.length > 0) {
-            data.forEach(vacancy => {
+        const vacancies = data || [];
+
+        // удаляем дубли
+        const uniqueVacancies = [];
+        const seen = new Set();
+
+        vacancies.forEach(v => {
+
+            const desc =
+                (v.description || "")
+                    .substring(0, 200);
+
+            const key =
+                `${v.title}_${v.company}_${(v.description || "").substring(0, 150)}`;
+
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueVacancies.push(v);
+            }
+        });
+
+        if (uniqueVacancies.length > 0) {
+            uniqueVacancies.forEach(vacancy => {
                 const div = document.createElement("div");
                 div.classList.add("vacancy");
 
                 const title = document.createElement("h3");
-                title.textContent = vacancy.name;
+                title.textContent = vacancy.title || "Без названия";
 
                 const company = document.createElement("p");
-                company.textContent = vacancy.employer?.name || "Компания не указана";
+                company.textContent = vacancy.company || "Компания не указана";
+
+                const location = document.createElement("p");
+                location.textContent = vacancy.location || "";
 
                 const salary = document.createElement("p");
-                if (vacancy.salary) {
-                    const { from, to, currency } = vacancy.salary;
-                    salary.textContent =
-                        (from || to)
-                            ? `${from || ''}–${to || ''} ${currency || ''}`
-                            : "Зарплата не указана";
-                } else {
-                    salary.textContent = "Зарплата не указана";
-                }
+                salary.textContent = vacancy.salary || "Зарплата не указана";
 
                 const buttonGroup = document.createElement("div");
                 buttonGroup.classList.add("button-group");
@@ -149,8 +165,8 @@ async function addFavoriteVacancy(userId, vacancy) {
         body: JSON.stringify({
             userId: parseInt(userId, 10),
             vacancyId: vacancy.id,
-            vacancyName: vacancy.name,
-            vacancyDescription: vacancy.description || ""  
+            vacancyName: vacancy.title ?? ""
+            //vacancyDescription: vacancy.description ?? ""
         })
     });
 }
@@ -162,139 +178,164 @@ async function removeFavoriteVacancy(userId, vacancyId) {
     );
 }
 
+function decodeHtml(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
+
 // функция отображения модального окна
 function showVacancyModal(vacancy) {
     const modal = document.createElement("div");
+
     modal.classList.add("vacancy-modal");
+
     modal.innerHTML = `
         <div class="vacancy-modal-content">
             <span class="close">&times;</span>
-            <h2>${vacancy.name}</h2>
-            <p><strong>Компания:</strong> ${vacancy.employer?.name || "Не указана"}</p>
-            <p><strong>Зарплата:</strong> ${vacancy.salary
-            ? `${vacancy.salary.from || ''}–${vacancy.salary.to || ''} ${vacancy.salary.currency || ''}`
-            : "Не указана"
-        }</p>
-            <div class="vacancy-description">${vacancy.description || "Описание отсутствует"}</div>
 
-            <div class="button-group">
-                <button id="applyButton" class="actionButton applyButton" type="button">Откликнуться на вакансию</button>
-                <button id="likeButton" class="actionButton likeButton" type="button">Сохранить</button>
+            <h2>${vacancy.title || "Без названия"}</h2>
+
+            <p><strong>Компания:</strong> ${vacancy.company || "Не указана"}</p>
+
+            <p><strong>Локация:</strong> ${vacancy.location || "Не указана"}</p>
+
+            <p><strong>Зарплата:</strong> ${vacancy.salary || "Не указана"}</p>
+
+            <div class="vacancy-description">
+                ${decodeHtml(vacancy.description || "Описание отсутствует")}
             </div>
 
+            <div class="button-group">
+                <button id="applyButton"
+                        class="actionButton applyButton"
+                        type="button">
+                    Откликнуться
+                </button>
+
+                <button id="likeButton"
+                        class="actionButton likeButton"
+                        type="button">
+                    Сохранить
+                </button>
+            </div>
         </div>
     `;
 
     document.body.appendChild(modal);
 
-    // закрыть окна
-    modal.querySelector(".close").addEventListener("click", () => modal.remove());
+    modal.querySelector(".close")
+        .addEventListener("click", () => modal.remove());
+
     modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.remove();
+        if (e.target === modal)
+            modal.remove();
     });
-
-    // логика Сохранить внутри модального кона
-    const likeBtn = modal.querySelector(".likeButton");
-    likeBtn.addEventListener("click", async () => {
-        likeBtn.classList.toggle("liked");
-        const isLiked = likeBtn.classList.contains("liked");
-        likeBtn.textContent = isLiked ? "Сохранено" : "Сохранить";
-
-        const userId = localStorage.getItem("userId");
-        if (isLiked) {
-            await addFavoriteVacancy(userId, vacancy);
-        } else {
-            await removeFavoriteVacancy(userId, vacancy.id);
-        }
-    });
-
 }
 
 // мои резюме 
 // загрузить вакансии при открытии страницы 
 async function loadSavedVacancies(savedContainer) {
+
     const userId = localStorage.getItem("userId");
 
+    if (!userId) {
+        savedContainer.innerHTML = "<p>Пользователь не найден.</p>";
+        return;
+    }
+
     try {
-        // 1. загружаем резюме, чтобы получить resumeId
-        const resumeResp = await fetch(
-            `https://localhost:64102/api/resume?userId=${userId}`
-        );
-        //const resume = await resumeResp.json();
-        //const resumeId = resume.id;
 
-        const resumes = await resumeResp.json();
-
-        if (!resumes || resumes.length === 0) {
-            alert("Нет резюме");
-            return;
-        }
-
-        const resumeId = resumes[0].id; 
-
-        // 2. загружаем список id сохранённых вакансий
         const resp = await fetch(
             `https://localhost:64102/api/favorite_vacancies?userId=${userId}`
         );
-        const favoriteVacancySummary = await resp.json();
 
-        console.log("1. favoriteVacancySummary:", favoriteVacancySummary);
+        if (!resp.ok) {
+            throw new Error(`Ошибка HTTP: ${resp.status}`);
+        }
 
-        if (!favoriteVacancySummary || favoriteVacancySummary.length === 0) {
-            savedContainer.innerHTML = "<p>Нет сохранённых вакансий.</p>";
+        const vacancies = await resp.json();
+
+        console.log("favorites:", vacancies);
+
+        if (!vacancies || vacancies.length === 0) {
+
+            savedContainer.innerHTML =
+                "<p>Нет сохранённых вакансий.</p>";
+
             return;
+        }
+
+        // резюме пробуем получить ОТДЕЛЬНО
+        let resumeId = null;
+
+        try {
+
+            const resumeResp = await fetch(
+                `https://localhost:64102/api/resume?userId=${userId}`
+            );
+
+            if (resumeResp.ok) {
+
+                const resumes = await resumeResp.json();
+
+                if (resumes && resumes.length > 0) {
+                    resumeId = resumes[0].id;
+                }
+            }
+
+        } catch (ex) {
+
+            console.warn("Резюме не найдено:", ex);
+
         }
 
         savedContainer.innerHTML = "";
 
-        // 3. один раз загружаем мок всех вакансий
-        const vacancyResp = await fetch("https://localhost:64102/api/vacancies"); // без query!
-        const vacancySource = await vacancyResp.json();
+        vacancies.forEach(vacancy => {
 
-        const vacancyList = Array.isArray(vacancySource)
-            ? vacancySource
-            : vacancySource.items || [];
+            const div = createVacancyDiv(
+                vacancy,
+                userId,
+                resumeId
+            );
 
-        console.log("2. vacancyList:", vacancyList);
-
-        for (const fv of favoriteVacancySummary) {
-            console.log("3. fv.id:", fv.id);
-
-            const vacancy = vacancyList.find(v => String(v.id) === String(fv.id));
-
-            console.log("4. found vacancy:", vacancy);
-
-            if (!vacancy) continue;
-
-            const div = createVacancyDiv(vacancy, userId, resumeId);
             savedContainer.appendChild(div);
-        }
+
+        });
+
     } catch (err) {
-        console.error("Ошибка загрузки сохранённых вакансий:", err);
-        savedContainer.innerHTML = "<p>Ошибка при загрузке сохранённых вакансий.</p>";
+
+        console.error("Ошибка загрузки избранного:", err);
+
+        savedContainer.innerHTML =
+            "<p>Ошибка загрузки вакансий.</p>";
     }
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const savedContainer =
+        document.querySelector(".saved-section");
+
+    if (savedContainer) {
+        await loadSavedVacancies(savedContainer);
+    }
+});
 
 function createVacancyDiv(vacancy, userId, resumeId) {
     const div = document.createElement("div");
     div.classList.add("vacancy");
 
     const title = document.createElement("h3");
-    title.textContent = vacancy.name;
+    title.textContent = vacancy.title || "Без названия";
 
     const company = document.createElement("p");
-    company.textContent = vacancy.employer?.name || "Компания не указана";
+    company.textContent =
+        vacancy.company || "Компания не указана";
 
     const salary = document.createElement("p");
-    if (vacancy.salary) {
-        const { from, to, currency } = vacancy.salary;
-        salary.textContent =
-            (from || to)
-                ? `${from || ''}–${to || ''} ${currency || ''}`
-                : "Зарплата не указана";
-    } else {
-        salary.textContent = "Зарплата не указана";
-    }
+    salary.textContent = vacancy.salary || vacancy.salaryText || "Зарплата не указана";
 
     const buttonGroup = document.createElement("div");
     buttonGroup.classList.add("button-group");
@@ -357,7 +398,10 @@ function createVacancyDiv(vacancy, userId, resumeId) {
     });
 
     buttonGroup.appendChild(likeBtn);
-    buttonGroup.appendChild(checkBtn);
+
+    if (resumeId) {
+        buttonGroup.appendChild(checkBtn);
+    }
 
     div.appendChild(title);
     div.appendChild(company);
@@ -411,16 +455,6 @@ function showResultBlock(parent, result) {
     parent.appendChild(resultBlock);
 }
 
-// вакансии при загрузке страницы 
-document.addEventListener("DOMContentLoaded", () => {
-    if (document.querySelector(".search-form")) {
-        loadVacancies("бариста"); // если это страница поиска
-    }
-    const savedContainer = document.querySelector(".saved-vacancies");
-    if (savedContainer) {
-        loadSavedVacancies(savedContainer);
-    }
-});
 
 // personal account (мои резюме, кнопка добавить резюме)
 const addResumeBtn = document.getElementById("addResumeBtn");
@@ -915,8 +949,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-
-
 async function logoutUser() {
     await fetch('/api/User/logout', { method: 'POST' });
     localStorage.clear();
@@ -945,10 +977,12 @@ document.addEventListener("DOMContentLoaded", () => {
         form.email.value = user.email || "";
     }
 
-    editBtn.addEventListener("click", () => {
-        fillForm();
-        modal.style.display = "flex";
-    });
+    if (editBtn) {
+        editBtn.addEventListener("click", () => {
+            fillForm();
+            modal.style.display = "flex";
+        });
+    }
 
     closeBtn.addEventListener("click", () => {
         modal.style.display = "none";
@@ -986,25 +1020,53 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-document.getElementById("login-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+const loginForm = document.getElementById("login-form");
 
-    const data = {
-        email: e.target.email.value,
-        password: e.target.password.value
-    };
+if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    const response = await fetch("https://localhost:64102/api/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        const data = {
+            email: e.target.email.value,
+            password: e.target.password.value
+        };
+
+        const response = await fetch("https://localhost:64102/api/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            localStorage.setItem("userId", result.id);
+            window.location.href = "/pages/personal_account.html";
+        } else {
+            alert("Неверный email или пароль");
+        }
     });
+}
 
-    if (response.ok) {
-        const result = await response.json();
-        localStorage.setItem("userId", result.id);
-        window.location.href = "/pages/personal_account.html";
-    } else {
-        alert("Неверный email или пароль");
+
+//
+//
+//
+// вакансии при загрузке страницы 
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const searchPage =
+        document.querySelector(".search-form");
+
+    if (searchPage) {
+        await loadVacancies("developer");
     }
 });
+//document.addEventListener("DOMContentLoaded", () => {
+//    if (document.querySelector(".search-form")) {
+//        loadVacancies("бариста"); // если это страница поиска
+//    }
+//    const savedContainer = document.querySelector(".saved-vacancies");
+//    if (savedContainer) {
+//        loadSavedVacancies(savedContainer);
+//    }
+//});
